@@ -1,7 +1,10 @@
+require('dotenv').config();
+
 const db = require('../database');
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const Blood = require('../models/Blood')
+const jwt = require('jsonwebtoken');
 
 module.exports = {
     //NOTE: AUTH register
@@ -108,20 +111,26 @@ module.exports = {
                         user_id: user.id
                     }).select('status')).status;
 
-                    res.status(200).json({
-                        message: "Berhasil login!",
-                        data: {
-                            name: user.name,
-                            identity: user.identity,
-                            phone_number: user.phone_number,
-                            address: user.address,
-                            province: user.province,
-                            city: user.city,
-                            postal_code: user.postal_code,
-                            email: user.email,
-                            available: getStatusAvailable
-                        }
-                    })
+                    jwt.sign({
+                        user,
+                        available: getStatusAvailable
+                    }, process.env.ACCESS_TOKEN_SECRET, (err, token) => {
+                        res.status(200).json({
+                            token,
+                            message: "Berhasil login!",
+                            data: {
+                                name: user.name,
+                                identity: user.identity,
+                                phone_number: user.phone_number,
+                                address: user.address,
+                                province: user.province,
+                                city: user.city,
+                                postal_code: user.postal_code,
+                                email: user.email,
+                                available: getStatusAvailable
+                            }
+                        })
+                    });
                 } else {
                     return res.status(401).json({
                         message: "Password Anda tidak sesuai!"
@@ -146,11 +155,20 @@ module.exports = {
         const allVolunteerList = await Blood.volunteerList();
 
         // console.log(allVolunteerList);
-
-        res.status(200).json({
-            message: "Berhasil mengambil data!",
-            data: allVolunteerList
-        });
+        // res.status(200).json({
+        //     message: "Berhasil mengambil data!",
+        //     data: allVolunteerList
+        // });
+        jwt.verify(req.token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+            if (err) {
+                res.sendStatus(403);
+            } else {
+                res.status(200).json({
+                    message: "Berhasil mengambil data!",
+                    data: allVolunteerList
+                });
+            }
+        })
     },
 
     // NOTE: patient add
@@ -180,20 +198,26 @@ module.exports = {
         }
 
         try {
-            await Blood.addPatient(blood_type.toUpperCase(), rhesus.toLowerCase(), amount_blood, patient_name, gender.toLowerCase(), patient_location, donor_location, contact);
             // FIXME: location and rhesus
             // https://maps.google.com/?q=<lat>,<lng>
-            res.status(201).json({
-                message: "Pasien baru telah terdaftar!",
-                data: {
-                    blood_type: blood_type.toUpperCase(),
-                    rhesus: rhesus.toLowerCase(),
-                    amount_blood: amount_blood,
-                    patient_name: patient_name,
-                    gender: gender.toLowerCase(),
-                    patient_location: patient_location,
-                    donor_location: donor_location,
-                    contact: contact,
+            jwt.verify(req.token, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
+                if (err) {
+                    res.sendStatus(403);
+                } else {
+                    await Blood.addPatient(user.user.id, blood_type.toUpperCase(), rhesus.toLowerCase(), amount_blood, patient_name, gender.toLowerCase(), patient_location, donor_location, contact);
+                    res.status(201).json({
+                        message: "Pasien baru telah terdaftar!",
+                        data: {
+                            blood_type: blood_type.toUpperCase(),
+                            rhesus: rhesus.toLowerCase(),
+                            amount_blood: amount_blood,
+                            patient_name: patient_name,
+                            gender: gender.toLowerCase(),
+                            patient_location: patient_location,
+                            donor_location: donor_location,
+                            contact: contact,
+                        },
+                    })
                 }
             })
         } catch (error) {
