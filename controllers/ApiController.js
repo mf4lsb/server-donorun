@@ -1,6 +1,7 @@
 const db = require('../database');
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
+const Blood = require('../models/Blood')
 
 module.exports = {
     //NOTE: AUTH register
@@ -47,7 +48,9 @@ module.exports = {
             } else {
                 await User.registerApi(full_name, identity, gender.toUpperCase(), blood_type.toUpperCase(), phone_number, address, province, postal_code, city, email, password)
 
-                const getIdAfterRegistered = await db('user').first().where({email: email}).select('id');
+                const getIdAfterRegistered = await db('user').first().where({
+                    email: email
+                }).select('id');
                 await db('available').insert({
                     user_id: getIdAfterRegistered.id,
                     status: "no".toUpperCase()
@@ -101,8 +104,10 @@ module.exports = {
             if (user) {
                 const validPass = await bcrypt.compare(password, user.password);
                 if (validPass) {
-                    const getStatusAvailable = (await db('available').first().where({user_id: user.id}).select('status')).status;
-                    
+                    const getStatusAvailable = (await db('available').first().where({
+                        user_id: user.id
+                    }).select('status')).status;
+
                     res.status(200).json({
                         message: "Berhasil login!",
                         data: {
@@ -138,9 +143,7 @@ module.exports = {
     // NOTE: volunteer list
     volunteerList: async (req, res) => {
         // select * from `user` inner join `available` on `user`.`id` = `available`.`user_id` WHERE `available`.`status` = 'YES'
-        const allVolunteerList = await db('available').join('user', 'available.user_id', '=', 'user.id').where({
-            status: "YES"
-        });
+        const allVolunteerList = await Blood.volunteerList();
 
         // console.log(allVolunteerList);
 
@@ -148,5 +151,57 @@ module.exports = {
             message: "Berhasil mengambil data!",
             data: allVolunteerList
         });
+    },
+
+    // NOTE: patient add
+    addPatient: async (req, res) => {
+        const {
+            blood_type,
+            rhesus,
+            amount_blood,
+            patient_name,
+            gender,
+            patient_location,
+            donor_location,
+            contact
+        } = req.body;
+
+        if (blood_type == undefined ||
+            rhesus == undefined ||
+            amount_blood == undefined ||
+            patient_name == undefined ||
+            gender == undefined ||
+            patient_location == undefined ||
+            donor_location == undefined ||
+            contact == undefined) {
+            return res.status(404).json({
+                message: "Lengkapi semua field"
+            });
+        }
+
+        try {
+            await Blood.addPatient(blood_type.toUpperCase(), rhesus.toLowerCase(), amount_blood, patient_name, gender.toLowerCase(), patient_location, donor_location, contact);
+            // FIXME: location and rhesus
+            // https://maps.google.com/?q=<lat>,<lng>
+            res.status(201).json({
+                message: "Pasien baru telah terdaftar!",
+                data: {
+                    blood_type: blood_type.toUpperCase(),
+                    rhesus: rhesus.toLowerCase(),
+                    amount_blood: amount_blood,
+                    patient_name: patient_name,
+                    gender: gender.toLowerCase(),
+                    patient_location: patient_location,
+                    donor_location: donor_location,
+                    contact: contact,
+                }
+            })
+        } catch (error) {
+            console.log("ERROR for ADD PATIENT API: ", err)
+            res.status(500).json({
+                message: "Terjadi kesalahan, silahkan kontak admin Donorun!"
+            });
+        }
     }
+
 }
