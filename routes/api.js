@@ -9,7 +9,8 @@ router.post('/register', upload.none(), apiController.registerUser);
 router.post('/login', upload.none(), apiController.loginUser);
 
 // API FIND BLOOD
-router.get('/volunteer', verifyToken, apiController.volunteerList);
+router.get('/volunteer', apiController.volunteerList);
 router.post('/add-patient', [upload.none(), verifyToken], apiController.addPatient);
+router.post('/blood', [upload.none(), verifyToken], apiController.needBlood);
 
 module.exports = router;

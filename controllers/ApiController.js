@@ -34,7 +34,7 @@ module.exports = {
             postal_code == undefined ||
             email == undefined ||
             password == undefined) {
-            return res.status(404).json({
+            return res.status(400).json({
                 message: "Lengkapi semua field"
             });
         }
@@ -96,7 +96,7 @@ module.exports = {
 
         if (email == undefined ||
             password == undefined) {
-            return res.status(404).json({
+            return res.status(400).json({
                 message: "Lengkapi semua field!"
             });
         }
@@ -137,7 +137,7 @@ module.exports = {
                     });
                 }
             } else {
-                return res.status(404).json({
+                return res.status(400).json({
                     message: "Email Anda tidak terdaftar silahkan daftar terlebih dahulu!"
                 });
             }
@@ -155,20 +155,22 @@ module.exports = {
         const allVolunteerList = await Blood.volunteerList();
 
         // console.log(allVolunteerList);
-        // res.status(200).json({
-        //     message: "Berhasil mengambil data!",
-        //     data: allVolunteerList
-        // });
-        jwt.verify(req.token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-            if (err) {
-                res.sendStatus(403);
-            } else {
-                res.status(200).json({
-                    message: "Berhasil mengambil data!",
-                    data: allVolunteerList
-                });
-            }
-        })
+        res.status(200).json({
+            message: "Berhasil mengambil data!",
+            data: allVolunteerList
+        });
+        // jwt.verify(req.token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+        //     if (err) {
+        //         res.status(403).json({
+        //             message: "Akun Anda tidak dikenali!"
+        //         });
+        //     } else {
+        //         res.status(200).json({
+        //             message: "Berhasil mengambil data!",
+        //             data: allVolunteerList
+        //         });
+        //     }
+        // })
     },
 
     // NOTE: patient add
@@ -176,46 +178,35 @@ module.exports = {
         const {
             blood_type,
             rhesus,
-            amount_blood,
             patient_name,
             gender,
-            patient_location,
-            donor_location,
-            contact
         } = req.body;
 
         if (blood_type == undefined ||
             rhesus == undefined ||
-            amount_blood == undefined ||
             patient_name == undefined ||
-            gender == undefined ||
-            patient_location == undefined ||
-            donor_location == undefined ||
-            contact == undefined) {
-            return res.status(404).json({
+            gender == undefined) {
+            return res.status(400).json({
                 message: "Lengkapi semua field"
             });
         }
 
         try {
-            // FIXME: location and rhesus
-            // https://maps.google.com/?q=<lat>,<lng>
+            // FIXME: rhesus
             jwt.verify(req.token, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
                 if (err) {
-                    res.sendStatus(403);
+                    res.status(403).json({
+                        message: "Akun Anda tidak dikenali!"
+                    });
                 } else {
-                    await Blood.addPatient(user.user.id, blood_type.toUpperCase(), rhesus.toLowerCase(), amount_blood, patient_name, gender.toLowerCase(), patient_location, donor_location, contact);
+                    await Blood.addPatient(user.user.id, blood_type.toUpperCase(), rhesus.toLowerCase(), patient_name, gender.toLowerCase());
                     res.status(201).json({
                         message: "Pasien baru telah terdaftar!",
                         data: {
                             blood_type: blood_type.toUpperCase(),
                             rhesus: rhesus.toLowerCase(),
-                            amount_blood: amount_blood,
                             patient_name: patient_name,
                             gender: gender.toLowerCase(),
-                            patient_location: patient_location,
-                            donor_location: donor_location,
-                            contact: contact,
                         },
                     })
                 }
@@ -226,6 +217,56 @@ module.exports = {
                 message: "Terjadi kesalahan, silahkan kontak admin Donorun!"
             });
         }
+    },
+
+    needBlood: (req, res) => {
+        const {
+            patient_id,
+            amount_blood,
+            patient_location,
+            donor_location,
+            contact
+        } = req.body;
+
+
+        if (patient_id == undefined ||
+            amount_blood == undefined ||
+            patient_location == undefined ||
+            donor_location == undefined ||
+            contact == undefined) {
+            return res.status(400).json({
+                message: "Lengkapi semua field"
+            });
+        }
+
+        try {
+            // FIXME: location
+            // https://maps.google.com/?q=<lat>,<lng>
+            jwt.verify(req.token, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
+                if (err) {
+                    res.status(403).json({
+                        message: "Akun Anda tidak dikenali!"
+                    });
+                } else {
+                    await Blood.needBlood(patient_id, amount_blood, patient_location, donor_location, contact);
+                    res.status(201).json({
+                        message: "Permintaan baru telah terdaftar!",
+                        data: {
+                            amount_blood: amount_blood,
+                            patient_location: patient_location,
+                            donor_location: donor_location,
+                            contact: contact,
+                        },
+                    })
+                }
+            })
+        } catch (error) {
+            console.log("ERROR for NEED BLOOD API: ", err)
+            res.status(500).json({
+                message: "Terjadi kesalahan, silahkan kontak admin Donorun!"
+            });
+        }
+
     }
 
 }

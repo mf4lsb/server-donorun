@@ -1,12 +1,43 @@
-# NOTE: AUTH
-# LOGIN
 POST http://localhost:3000/api/v1/users/login
 Content-Type: application/json
-Accept: /application/json
+Accept:application/json
 
 {
     "email": "naufalbahri02@gmail.com",
     "password": "123456"
 }
 
-## 
+###
+
+POST http://localhost:3000/api/v1/users/blood
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxOCwibmFtZSI6IkJhaHJpIiwiaWRlbnRpdHkiOiIzNDIzNDIiLCJwaG9uZV9udW1iZXIiOiIwODEzMTgzNDgwNzUiLCJhZGRyZXNzIjoicGVydW0gcnNjbSIsInByb3ZpbmNlIjoiamF3YSBiYXJhdCIsImNpdHkiOiJib2dvciIsInBvc3RhbF9jb2RlIjoxNjcxMCwiZW1haWwiOiJuYXVmYWxiYWhyaTAyQGdtYWlsLmNvbSIsInBhc3N3b3JkIjoiJDJiJDEwJEUyblRIVkJic3pESGNWSG1TbDNKc2VVQUwzM0hyQ2I1VkE2UUh6dWtpSG5zeURtN1J1NGw2IiwiZ2VuZGVyIjoibWFsZSIsImJsb29kX3R5cGUiOiJBQiIsImNyZWF0ZWRfYXQiOiIyMDIxLTA4LTEwVDEwOjU1OjE0LjAwMFoiLCJ1cGRhdGVkX2F0IjoiMjAyMS0wOC0xMFQxMDo1NToxNC4wMDBaIn0sImF2YWlsYWJsZSI6IllFUyIsImlhdCI6MTYyODc0Mzk1Mn0.bj_cWJ96JfESaRm8BqhohcHs-OyFSK_NX1eMjwSNaF0
+
+{
+    "patient_id": 1,
+    "amount_blood": 2,
+    "patient_location": ["3232323", "1212132324"],
+    "donor_location": "RS. Aminah",
+    "contact": "0812132434"
+}
+
+###
+
+GET http://localhost:3000/api/v1/users/volunteer
+Content-Type: application/json
+Accept: application/json
+
+###
+
+POST http://localhost:3000/api/v1/users/add-patient
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxOCwibmFtZSI6IkJhaHJpIiwiaWRlbnRpdHkiOiIzNDIzNDIiLCJwaG9uZV9udW1iZXIiOiIwODEzMTgzNDgwNzUiLCJhZGRyZXNzIjoicGVydW0gcnNjbSIsInByb3ZpbmNlIjoiamF3YSBiYXJhdCIsImNpdHkiOiJib2dvciIsInBvc3RhbF9jb2RlIjoxNjcxMCwiZW1haWwiOiJuYXVmYWxiYWhyaTAyQGdtYWlsLmNvbSIsInBhc3N3b3JkIjoiJDJiJDEwJEUyblRIVkJic3pESGNWSG1TbDNKc2VVQUwzM0hyQ2I1VkE2UUh6dWtpSG5zeURtN1J1NGw2IiwiZ2VuZGVyIjoibWFsZSIsImJsb29kX3R5cGUiOiJBQiIsImNyZWF0ZWRfYXQiOiIyMDIxLTA4LTEwVDEwOjU1OjE0LjAwMFoiLCJ1cGRhdGVkX2F0IjoiMjAyMS0wOC0xMFQxMDo1NToxNC4wMDBaIn0sImF2YWlsYWJsZSI6IllFUyIsImlhdCI6MTYyODc0NDYyMX0.ltUVaI-2OMzMC0vXjKAtvBPyFlIWF4W6qoXh0pD4R0c
+
+{
+    "blood_type": "A",
+    "rhesus": "POSITIVE",
+    "patient_name": "Ammars",
+    "gender": "MALE"
+}

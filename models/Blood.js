@@ -8,16 +8,23 @@ module.exports = {
         return list;
     },
 
-    addPatient: async (user_id, blood_type, rhesus, amount_blood, patient_name, gender, patient_location, donor_location, contact) => {
+    addPatient: async (user_id, blood_type, rhesus, patient_name, gender) => {
         await db('patient').insert({
             user_id: user_id,
             blood_type: blood_type,
             rhesus: rhesus,
-            amount_blood: amount_blood,
             patient_name: patient_name,
             gender: gender,
-            latitude: JSON.parse(patient_location)[0],
-            longitude: JSON.parse(patient_location)[1],
+
+        });
+    },
+
+    needBlood: async (patient_id, amount_blood, patient_location, donor_location, contact) => {
+        await db('blood').insert({
+            patient_id: patient_id,
+            amount_blood: amount_blood,
+            latitude: patient_location[0],
+            longitude: patient_location[1],
             donor_location: donor_location,
             contact: contact
         });
