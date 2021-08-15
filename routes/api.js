@@ -13,4 +13,6 @@ router.get('/volunteer', apiController.volunteerList);
 router.post('/add-patient', [upload.none(), verifyToken], apiController.addPatient);
 router.post('/blood', [upload.none(), verifyToken], apiController.needBlood);
 
+// API ARTICLE
+router.get('/article', apiController.getArticle);
 module.exports = router;

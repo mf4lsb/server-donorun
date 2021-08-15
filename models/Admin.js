@@ -28,19 +28,19 @@ module.exports = {
         return logHistory;
     },
 
-    addNewDonor: async (email, location, date) => {
-        const id = (await db('user')
-            .where({
-                email: email
-            })
-            .select('id'))[0].id;
-        await db('history_log').insert({
-            user_id: id,
-            location: location,
-            status: "NO",
-            donor_date: date
-        })
-    },
+    // addNewDonor: async (email, location, date) => {
+    //     const id = (await db('user')
+    //         .where({
+    //             email: email
+    //         })
+    //         .select('id'))[0].id;
+    //     await db('history_log').insert({
+    //         user_id: id,
+    //         location: location,
+    //         status: "NO",
+    //         donor_date: date
+    //     })
+    // },
 
     verify: async (historyId) => {
         await db('history_log')
