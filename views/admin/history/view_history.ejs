@@ -1,0 +1,247 @@
+<%- include('../../partials/header.ejs') %>
+
+<!-- Page Wrapper -->
+<div id="wrapper">
+
+    <%- include('../../partials/sidebar.ejs') %>
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <!-- Main Content -->
+        <div id="content">
+
+            <%- include('../../partials/navbar.ejs') %>
+
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <h1 class="h3 mb-4 text-gray-800">Log History Donor</h1>
+                <p class="mb-4">Halaman ini berisikan riwayat donor dari seluruh pendonor.</p>
+                <%- include('../../partials/message.ejs') %>
+
+                <!-- Add Data Pendonor -->
+                <div class="card shadow mb-4">
+                    <!-- Card Header - Accordion -->
+                    <a href="#collapseCardExample" class="d-block card-header py-3" data-toggle="collapse" role="button"
+                        aria-expanded="true" aria-controls="collapseCardExample">
+                        <h6 class="m-0 font-weight-bold text-primary">Tambahkan Data Pendonor</h6>
+                    </a>
+                    <!-- Card Content - Collapse -->
+                    <div class="collapse show" id="collapseCardExample">
+                        <div class="card-body">
+
+                            <form action="/admin/history-page/donor" method="post">
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Email</label>
+                                    <input type="email" class="form-control" id="exampleInputEmail1"
+                                        aria-describedby="emailHelp" placeholder="Masukkan Email pengguna" name="email">
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Lokasi</label>
+                                    <input type="text" class="form-control" id="exampleInputEmail1"
+                                        placeholder="Masukkan lokasi donor" name="location">
+                                </div>
+                                <div class="form-group">
+                                    <label for="donor-date">Tanggal</label>
+                                    <input type="date" class="form-control" id="donor-date" name="date">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Butuh Verifikasi -->
+                <div class="card shadow mb-4">
+                    <!-- Card Header - Accordion -->
+                    <a href="#collapseCardExample" class="d-block card-header py-3" data-toggle="collapse" role="button"
+                        aria-expanded="true" aria-controls="collapseCardExample">
+                        <h6 class="m-0 font-weight-bold text-warning">Membutuhkan Verifikasi</h6>
+                    </a>
+                    <!-- Card Content - Collapse -->
+                    <div class="collapse show" id="collapseCardExample">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>ID Kartu</th>
+                                            <th>Lokasi Donor</th>
+                                            <th>Tanggal Donor</th>
+                                            <th>Bukti Foto</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tfoot>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>ID Kartu</th>
+                                            <th>Lokasi Donor</th>
+                                            <th>Tanggal Donor</th>
+                                            <th>Bukti Foto</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </tfoot>
+                                    <tbody>
+                                        <% logHistory.forEach(data => { %>
+                                        <% if (data.status == "NO") { const date = new Date(data.donor_date.toString()); %>
+                                        <tr>
+                                            <td><%= data.name %></td>
+                                            <td><%= data.uuid %></td>
+                                            <td><%= data.location %></td>
+                                            <td><%= date.getDate() + "-" + date.getMonth() + "-" + date.getFullYear() %>
+                                            </td>
+                                            <td></td>
+                                            <td>
+                                                <button type="button" class="btn btn-success" data-toggle="modal"
+                                                    data-target="#modalVerify"
+                                                    onclick="verifyUserDonor('<%= data.id %>')">Verifikasi</button>
+                                                <button type="button" class="btn btn-danger">Tolak</button>
+                                            </td>
+                                        </tr>
+                                        <% } %>
+                                        <% }) %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Card Log History All -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-success">Log History Donor Seluruh User</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>ID Kartu</th>
+                                        <th>Lokasi Donor</th>
+                                        <th>Tanggal Donor</th>
+                                    </tr>
+                                </thead>
+                                <tfoot>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>ID Kartu</th>
+                                        <th>Lokasi Donor</th>
+                                        <th>Tanggal Donor</th>
+                                    </tr>
+                                </tfoot>
+                                <tbody>
+                                    <% logHistory.forEach(data => { %>
+                                    <% if (data.status == "YES") { const date = new Date(data.donor_date.toString()); %>
+                                    <tr>
+                                        <td><%= data.name %></td>
+                                        <td><%= data.uuid %></td>
+                                        <td><%= data.location %></td>
+                                        <td><%= date.getDate() + "-" + date.getMonth() + "-" + date.getFullYear() %>
+                                        </td>
+                                    </tr>
+                                    <% } %>
+                                    <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- /.container-fluid -->
+
+        </div>
+        <!-- End of Main Content -->
+
+        <%- include('../../partials/footer.ejs') %>
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+</div>
+<!-- End of Page Wrapper -->
+
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<!-- Logout Modal-->
+<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-primary" href="login.html">Logout</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modalVerify" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-group row">
+                    <label for="staticEmail" class="col-sm-4 col-form-label">Name</label>
+                    <div class="col-sm-8">
+                        <input type="text" readonly class="form-control-plaintext" id="name" value="John Doe">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="staticEmail" class="col-sm-4 col-form-label">ID Kartu</label>
+                    <div class="col-sm-8">
+                        <input type="text" readonly class="form-control-plaintext" id="cardId" value="23152334">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="staticEmail" class="col-sm-4 col-form-label">Lokasi Donor</label>
+                    <div class="col-sm-8">
+                        <input type="text" readonly class="form-control-plaintext" id="locationDonor"
+                            value="RS. Atma Djaya">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="staticEmail" class="col-sm-4 col-form-label">Tanggal Donor</label>
+                    <div class="col-sm-8">
+                        <input type="text" readonly class="form-control-plaintext" id="donorDate" value="23-08-2021">
+                    </div>
+                </div>
+
+                Yakin untuk verifikasi user tersebut?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <form action="/admin/verify" method="post">
+                    <input type="hidden" readonly class="form-control-plaintext" id="historyId" name="historyId">
+                    <button type="submit" class="btn btn-primary">Verify</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../../partials/js.ejs') %>
+
+<script>
+    function verifyUserDonor(id) {
+        $("#modalVerify #historyId").val(id)
+    }
+</script>

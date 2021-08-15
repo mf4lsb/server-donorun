@@ -3,9 +3,9 @@
 
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-        <div class="sidebar-brand-icon rotate-n-15">
+        <!-- <div class="sidebar-brand-icon rotate-n-15">
             <i class="fas fa-laugh-wink"></i>
-        </div>
+        </div> -->
         <div class="sidebar-brand-text mx-3">Admin Donorun</div>
     </a>
 
@@ -13,8 +13,10 @@
     <hr class="sidebar-divider my-0">
 
     <!-- Nav Item - Dashboard -->
-    <li class="nav-item">
-        <a class="nav-link" href="index.html">
+    <li class="nav-item <% if (title == "Dashboard") { %>
+        active     
+    <% } %>">
+        <a class="nav-link" href="/admin/dashboard">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Dashboard</span></a>
     </li>
@@ -28,27 +30,39 @@
     </div>
 
     <!-- Nav Item - Auth User -->
-    <li class="nav-item">
-        <a class="nav-link" href="/admin/auth-user">
+    <li class="nav-item <% if (title == "User") { %>
+     active
+    <% } %>">
+        <a class="nav-link" href="/admin/user-page">
             <i class="fas fa-user"></i>
-            <span>Auth user</span></a>
+            <span>User</span></a>
     </li>
-    
+
+    <!-- Nav Item - Auth User -->
+    <li class="nav-item <% if (title == "Posting") { %>
+     active
+    <% } %>">
+        <a class="nav-link" href="/admin/posting-page">
+            <i class="fas fa-newspaper"></i>
+            <span>Posting</span></a>
+    </li>
+
     <!-- Nav Item - Charts -->
-    <li class="nav-item">
-        <a class="nav-link" href="charts.html">
-            <i class="fas fa-fw fa-chart-area"></i>
-            <span>Charts</span></a>
+    <li class="nav-item <% if (title == "Darah") { %>
+     active
+    <% } %>">
+        <a class="nav-link" href="/admin/blood-page">
+            <i class="fas fa-hand-holding-water"></i>
+            <span>Darah</span></a>
     </li>
-
-    <!-- Nav Item - Tables -->
-    <li class="nav-item">
-        <a class="nav-link" href="tables.html">
-            <i class="fas fa-fw fa-table"></i>
-            <span>Tables</span></a>
-    </li>
-
     
+    <li class="nav-item <% if (title == "History Log") { %>
+     active
+    <% } %>">
+        <a class="nav-link" href="/admin/history-page">
+            <i class="fas fa-book-medical"></i>
+            <span>History Log Donor</span></a>
+    </li>
 
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">

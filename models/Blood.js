@@ -28,5 +28,12 @@ module.exports = {
             donor_location: donor_location,
             contact: contact
         });
+    },
+
+    getDataGiver: async () => {
+        const listGiver = await db('available').join('user', 'available.user_id', '=', 'user.id').where({
+            status: "YES"
+        }).select('user.id', 'name', 'identity', 'phone_number', 'address', 'city', 'postal_code', 'blood_type', 'gender', 'status', 'rhesus');
+        return listGiver;
     }
 }

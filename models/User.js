@@ -1,5 +1,6 @@
 const db = require('../database');
 const bcrypt = require('bcrypt');
+const { v1: uuidv1 } = require('uuid');
 
 module.exports = {
     register: async (firstName, lastName, identity, phoneNumber, address, province, postalCode, city, email, password) => {
@@ -28,6 +29,7 @@ module.exports = {
         return user;
     },
 
+    // REGISTER API USER
     registerApi: async (full_name, identity, gender, blood_type, phone_number, address, province, postal_code, city, email, password) => {
 
         const hash = await bcrypt.hash(password, 10);
@@ -42,6 +44,7 @@ module.exports = {
             city: city,
             postal_code: postal_code,
             email: email,
+            uuid: uuidv1(),
             password: hash
         });
     }
