@@ -7,6 +7,7 @@ const bcrypt = require('bcrypt');
 const {
     v1: uuidv1
 } = require('uuid');
+const Article = require('../models/Article');
 
 module.exports = {
     // NOTE: AUTHENTICATION
@@ -152,11 +153,39 @@ module.exports = {
         });
     },
 
-    // NOTE: POST
+    // NOTE: ARTICLE
     viewArticle: (req, res) => {
+        const alertMessage = req.flash('alertMessage');
+        const alertStatus = req.flash('alertStatus');
+        const alert = {
+            message: alertMessage,
+            status: alertStatus
+        };
+
         res.render('admin/article/view_article', {
-            title: "Posting"
+            alert: alert,
+            title: "Artikel"
         });
+    },
+
+    insertArticle: async (req, res) => {
+        const {
+            title,
+            body
+        } = req.body;
+
+        if (title && body) {
+            try {
+                await Article.insertArticle(title, req.file.filename, body);
+                req.flash('alertMessage', "Artikel baru telah di tambahkan");
+                req.flash('alertStatus', 'success');
+                res.redirect('/admin/article');
+            } catch (error) {
+                console.log(error);
+            }
+        } else {
+            console.log("GAGAL");
+        }
     },
 
     // NOTE: BLOOD
@@ -211,7 +240,9 @@ module.exports = {
     },
 
     verify: async (req, res) => {
-        const { historyId } = req.body;
+        const {
+            historyId
+        } = req.body;
         try {
             await Admin.verify(historyId);
             res.redirect('/admin/history-page');

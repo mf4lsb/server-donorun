@@ -272,8 +272,7 @@ module.exports = {
     // NOTE: POSTING/ARTICLE
     getArticle: async (req, res) => {
         const allArticle = await Article.getArticle();
-
-        // console.log(allVolunteerList);
+        
         res.status(200).json({
             message: "Berhasil mengambil data!",
             data: allArticle

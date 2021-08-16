@@ -55,3 +55,9 @@ Accept: application/json
     "email": "admindonorun2@gmail.com",
     "password": "admindonorun2"
 }
+
+###
+
+GET http://localhost:3000/api/v1/users/article
+Content-Type: application/json
+Accept: application/json

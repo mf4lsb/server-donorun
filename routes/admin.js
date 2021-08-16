@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const adminController = require('../controllers/AdminController');
+const { uploadSingle } = require('../middlewares/multers');
 const multer = require('multer');
 const upload = multer();
 
@@ -15,7 +16,8 @@ router.post('/auth-user/register', adminController.registerUser);
 router.post('/auth-user/login', adminController.loginUser);
 
 // NOTE: POST
-router.get('/posting-page', adminController.viewArticle);
+router.get('/article', adminController.viewArticle);
+router.post('/article', uploadSingle, adminController.insertArticle);
 
 // NOTE: BLOOD
 router.get('/blood-page', adminController.viewBlood);
